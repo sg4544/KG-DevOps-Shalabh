@@ -1,0 +1,51 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+
+    "Description": "KG DevOps interview CF stack",
+
+    "Resources": {
+        "InterviewEC2Instance": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "InstanceType": "t2.nano",
+                "ImageId": "ami-0b898040803850657",
+				"KeyName" : "ulvusmjb01_nv",
+                "SourceDestCheck" : "false",
+				"Tags" : [
+				    {
+					     "Key" : "Name",
+						 "Value" : "Shalabh Goyal"
+				    }
+				],
+				"UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
+                "#!/bin/bash -xe\n",
+                "yum update -y\n"
+			    ]]}},
+                
+                "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
+                "#!/bin/bash -xe\n",
+                "aws sqs get-queue-url --queue-name MyQueue\n"
+			    ]]}}					
+            }
+        },
+		
+		"InstanceSecurityGroup" : {
+            "Type" : "AWS::EC2::SecurityGroup",
+            "Properties" : {
+                "GroupDescription" : "Enable SSH access via port 22",
+                "SecurityGroupIngress" : [ {
+                  "IpProtocol" : "tcp",
+                  "FromPort" : "22",
+                  "ToPort" : "22"
+                } ]
+            }
+        }
+    },
+    
+	"Outputs" : {
+      "InstanceId" : {
+        "Description" : "InstanceId of the newly created EC2 instance",
+        "Value" : { "Ref" : "InterviewEC2Instance" }
+      }
+	}
+}
